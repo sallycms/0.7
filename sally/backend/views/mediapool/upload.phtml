@@ -21,7 +21,7 @@ $form->setEncType('multipart/form-data');
 
 $form->addHiddenValue('page', 'mediapool_upload');
 $form->addHiddenValue('func', 'upload');
-$form->addHiddenValue('callback', sly_request('callback', 'string'));
+$this->appendParamsToForm($form);
 
 ////////////////////////////////////////////////////////
 // file title

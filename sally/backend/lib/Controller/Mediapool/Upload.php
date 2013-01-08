@@ -37,7 +37,10 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
 				exit;
 			}
 			elseif ($file !== null) {
-				sly_Core::getCurrentApp()->redirect('mediapool', array('info' => $this->info));
+				$values = $this->popupHelper->getValues();
+				$values['info'] = $this->info;
+
+				sly_Core::getCurrentApp()->redirect('mediapool', $values);
 			}
 		}
 		else {

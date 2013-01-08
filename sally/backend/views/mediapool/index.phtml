@@ -22,12 +22,7 @@ $this->render('mediapool/notices.phtml', array(), false);
 $form = new sly_Form('index.php', 'POST', t('selected_category'), '', 'sly-form-mediapool-media');
 $form->addHiddenValue('page', 'mediapool');
 $form->addHiddenValue('func', 'batch');
-
-// additional arguments
-
-foreach ($this->args as $name => $value) {
-	$form->addHiddenValue('args['.$name.']', $value);
-}
+$this->appendParamsToForm($form);
 
 $isAdmin = $this->isMediaAdmin();
 
@@ -78,8 +73,6 @@ if ($isAdmin) {
 // list files
 
 print '<tbody>';
-
-$argUrl = $this->getArgumentString();
 
 foreach ($files as $file) {
 	$id         = $file->getId();
@@ -133,7 +126,7 @@ foreach ($files as $file) {
 
 	if ($title == '') $title = '['.t('no_title').']';
 
-	$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;category='.$selected.$argUrl;
+	$ilink  = $this->appendQueryString('index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;category='.$selected);
 	$add_td = '<td>&nbsp;</td>';
 
 	if ($isAdmin) {

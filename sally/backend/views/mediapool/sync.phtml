@@ -20,6 +20,7 @@ $form = new sly_Form('index.php', 'POST', t('sync_files'), '', 'sly-form-mediapo
 
 $form->addHiddenValue('page', 'mediapool_sync');
 $form->addHiddenValue('func', 'sync');
+$this->appendParamsToForm($form);
 
 ////////////////////////////////////////////////////////
 // files title

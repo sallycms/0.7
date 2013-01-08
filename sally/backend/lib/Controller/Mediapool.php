@@ -15,6 +15,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 	protected $selectBox;
 	protected $categories;
 	protected $action;
+	protected $popupHelper;
 
 	private $init = false;
 
@@ -25,16 +26,23 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		// load our i18n stuff
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/mediapool/');
 
-		$this->info       = sly_request('info', 'string', '');
-		$this->warning    = sly_request('warning', 'string', '');
-		$this->args       = sly_requestArray('args', 'string');
-		$this->categories = array();
-		$this->action     = $action;
+		// init custom query string params
+		$params = array('callback' => 'string', 'args' => 'array');
+
+		$this->popupHelper = new sly_Helper_Popup($params, 'SLY_MEDIAPOOL_URL_PARAMS');
+		$this->popupHelper->init();
+
+		$this->info    = sly_request('info', 'string', '');
+		$this->warning = sly_request('warning', 'string', '');
+		$this->action  = $action;
 
 		// init category filter
-		if (isset($this->args['categories'])) {
-			$cats             = array_map('intval', explode('|', $this->args['categories']));
-			$this->categories = array_unique($cats);
+		$cats = $this->popupHelper->getArgument('categories');
+
+		// do NOT use empty(), as '0' is a valid value!
+		if (strlen($cats) > 0) {
+			$cats             = array_unique(array_map('intval', explode('|', $cats)));
+			$this->categories = count($cats) === 0 ? null : $cats;
 		}
 
 		$this->getCurrentCategory();
@@ -47,6 +55,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 
 		if ($page) {
 			$cur     = sly_Core::getCurrentControllerName();
+			$values  = $this->popupHelper->getValues();
 			$subline = array(
 				array('mediapool',        t('media_list')),
 				array('mediapool_upload', t('upload_file'))
@@ -60,8 +69,8 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 			foreach ($subline as $item) {
 				$sp = $page->addSubpage($item[0], $item[1]);
 
-				if (!empty($this->args)) {
-					$sp->setExtraParams(array('args' => $this->args));
+				if (!empty($values)) {
+					$sp->setExtraParams($values);
 
 					// ignore the extra params when detecting the current page
 					if ($cur === $item[0]) $sp->forceStatus(true);
@@ -78,14 +87,12 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$this->render('mediapool/javascript.phtml', array(), false);
 	}
 
-	protected function getArgumentString($separator = '&amp;') {
-		$args = array();
+	protected function appendQueryString($url, $separator = '&amp;') {
+		return $this->popupHelper->appendQueryString($url, $separator);
+	}
 
-		foreach ($this->args as $name => $value) {
-			$args['args['.$name.']'] = $value;
-		}
-
-		return http_build_query($args, '', $separator);
+	protected function appendParamsToForm(sly_Form $form) {
+		return $this->popupHelper->appendParamsToForm($form);
 	}
 
 	protected function getCurrentCategory() {
@@ -113,8 +120,8 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 	}
 
 	protected function getOpenerLink(sly_Model_Medium $file) {
-		$callback = sly_request('callback', 'string');
 		$link     = '';
+		$callback = $this->popupHelper->get('callback');
 
 		if (!empty($callback)) {
 			$filename = $file->getFilename();
@@ -130,9 +137,10 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$where = 'f.category_id = '.$cat;
 		$where = sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_QUERY', $where, array('category_id' => $cat));
 		$where = '('.$where.')';
+		$types = $this->popupHelper->getArgument('types');
 
-		if (isset($this->args['types'])) {
-			$types = explode('|', preg_replace('#[^a-z0-9/+.-|]#i', '', $this->args['types']));
+		if (!empty($types)) {
+			$types = explode('|', preg_replace('#[^a-z0-9/+.-|]#i', '', $types));
 
 			if (!empty($types)) {
 				$where .= ' AND filetype IN ("'.implode('","', $types).'")';
@@ -309,16 +317,13 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 			$this->selectBox->setMultiple(false);
 			$this->selectBox->setAttribute('value', $this->getCurrentCategory());
 
-			// filter categories if args[categories] is set
-			if (isset($this->args['categories'])) {
-				$cats = array_map('intval', explode('|', $this->args['categories']));
-				$cats = array_unique($cats);
+			// filter categories
+			if (!empty($this->categories)) {
+				$values = array_keys($this->selectBox->getValues());
 
-				if (!empty($cats)) {
-					$values = array_keys($this->selectBox->getValues());
-
-					foreach ($values as $catID) {
-						if (!in_array($catID, $cats)) $this->selectBox->removeValue($catID);
+				foreach ($values as $catID) {
+					if (!in_array($catID, $this->categories)) {
+						$this->selectBox->removeValue($catID);
 					}
 				}
 			}

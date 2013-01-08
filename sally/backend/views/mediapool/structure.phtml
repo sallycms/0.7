@@ -12,7 +12,7 @@
 // print breadcrumb path
 
 $base  = 'index.php?page=mediapool_structure&amp;cat_id=';
-$path  = '<li> : <a href="'.$base.'0">'.ht('start').'</a></li>';
+$path  = '<li> : <a href="'.$this->appendQueryString($base.'0').'">'.ht('start').'</a></li>';
 $catID = sly_request('cat_id', 'int');
 $cat   = sly_Util_MediaCategory::findById($catID);
 
@@ -25,10 +25,10 @@ else {
 	$parents    = $cat->getParentTree();
 
 	foreach ($parents as $parent) {
-		$path .= '<li> : <a href="'.$base.$parent->getId().'">'.sly_html($parent->getName()).'</a></li>';
+		$path .= '<li> : <a href="'.$this->appendQueryString($base.$parent->getId()).'">'.sly_html($parent->getName()).'</a></li>';
 	}
 
-	$path .= '<li> : <a href="'.$base.$catID.'">'.sly_html($cat->getName()).'</a></li>';
+	$path .= '<li> : <a href="'.$this->appendQueryString($base.$catID).'">'.sly_html($cat->getName()).'</a></li>';
 }
 
 ?>
@@ -52,28 +52,31 @@ $editID = sly_request('edit_id', 'int');
 
 if ($this->action == 'add' || $this->action == 'edit') {
 	$addMode = $this->action == 'add';
+	$form    = new sly_Form('index.php', '');
+
+	$form->addHiddenValue('page', 'mediapool_structure');
+	$form->addHiddenValue('cat_id', $catID);
+	$form->addHiddenValue('func', $this->action);
+
+	if ($editID) {
+		$form->addHiddenValue('edit_id', $editID);
+	}
+
+	$this->appendParamsToForm($form);
+	$form->setSubmitButton(null);
+	$form->setResetButton(null);
 
 	?>
 	<form action="index.php" method="post">
-		<fieldset>
-			<input type="hidden" name="page" value="mediapool_structure" />
-			<input type="hidden" name="cat_id" value="<?php echo $catID ?>" />
-			<input type="hidden" name="func" value="<?php echo $this->action ?>" />
-			<?php	if ($this->action): ?>
-			<input type="hidden" name="edit_id" value="<?php echo $editID ?>" />
-			<?php endif ?>
+	<?php
 
-			<?php foreach ($this->args as $name => $value): ?>
-			<input type="hidden" name="args[<?php echo $name ?>]" value="<?php echo sly_html($value) ?>" />
-			<?php endforeach ?>
-		</fieldset>
-		<?php
+	print $form->render(true);
 }
 
 $rawBase = 'index.php?page=mediapool_structure&cat_id=';
 $table   = new sly_Table('sly-mediapool-structure');
 
-$table->addColumn(sly_Table_Column::sprite('mediacat-add', $rawBase.$catID.'&func=add', t('add_category'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::sprite('mediacat-add', $this->appendQueryString($rawBase.$catID.'&func=add', '&'), t('add_category'), 'sly-col-icon'));
 $table->addColumn(sly_Table_Column::factory(t('category_name'), 'sly-col-name'));
 $table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
 
@@ -106,11 +109,11 @@ foreach ($categories as $cat) {
 	else {
 		?>
 		<tr>
-			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($rawBase.$catID.'&func=edit&edit_id='.$id, $cat->getName(), 'mediacat') ?></td>
-			<td class="sly-col-name"><a href="<?php echo $base.$id ?>"><?php echo sly_html($cat->getName()) ?></a></td>
+			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($this->appendQueryString($rawBase.$catID.'&func=edit&edit_id='.$id, '&'), $cat->getName(), 'mediacat') ?></td>
+			<td class="sly-col-name"><a href="<?php echo $this->appendQueryString($base.$id) ?>"><?php echo sly_html($cat->getName()) ?></a></td>
 			<td class="sly-col-func">
-				<a href="<?php echo $base.$catID ?>&amp;func=edit&amp;edit_id=<?php echo $id ?>"><?php echo t('change')?></a>
-				<a href="<?php echo $base.$catID ?>&amp;func=delete&amp;edit_id=<?php echo $id ?>" class="sly-action sly-delete"><?php echo t('delete') ?></a>
+				<a href="<?php echo $this->appendQueryString($base.$catID.'&amp;func=edit&amp;edit_id='.$id) ?>"><?php echo t('change')?></a>
+				<a href="<?php echo $this->appendQueryString($base.$catID.'&amp;func=delete&amp;edit_id='.$id) ?>" class="sly-action sly-delete"><?php echo t('delete') ?></a>
 			</td>
 		</tr>
 		<?php

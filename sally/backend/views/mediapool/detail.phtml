@@ -36,17 +36,10 @@ $this->render('mediapool/notices.phtml', array(), false);
 if ($this->canAccessFile($medium)) {
 	$form = new sly_Form('index.php', 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
 	$form->setEncType('multipart/form-data');
-
 	$form->addHiddenValue('page', 'mediapool_detail');
 	$form->addHiddenValue('func', 'save');
 	$form->addHiddenValue('file_id', $fileID);
-	$form->addHiddenValue('callback', sly_request('callback', 'string'));
-
-	// additional arguments
-
-	foreach (sly_requestArray('args', 'string') as $name => $value) {
-		$form->addHiddenValue('args['.$name.']', $value);
-	}
+	$this->appendParamsToForm($form);
 }
 else {
 	$form = new sly_Form('index.php', 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
