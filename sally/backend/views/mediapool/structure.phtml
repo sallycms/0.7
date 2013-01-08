@@ -52,7 +52,7 @@ $editID = sly_request('edit_id', 'int');
 
 if ($this->action == 'add' || $this->action == 'edit') {
 	$addMode = $this->action == 'add';
-	$form    = new sly_Form('index.php', '');
+	$form    = new sly_Form('index.php', 'POST', '');
 
 	$form->addHiddenValue('page', 'mediapool_structure');
 	$form->addHiddenValue('cat_id', $catID);
