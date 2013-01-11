@@ -192,7 +192,8 @@ class sly_Util_HTML {
 			$clang    = isset($match[2]) ? (int) $match[2][0] : null;
 
 			try {
-				$repl = sly_Util_Article::getUrl($id, $clang);
+				$article = sly_Util_Article::findById($id, $clang);
+				$repl    = $article ? $article->getUrl() : '#';
 			}
 			catch (Exception $e) {
 				$repl = '#';
