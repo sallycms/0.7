@@ -60,18 +60,12 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 			if ($this->action === 'moveslice') {
 				$slice_id = sly_request('slice_id', 'int', null);
-
-				if ($slice_id) {
-					$slice = sly_Util_ArticleSlice::findById($slice_id);
-					return ($user->isAdmin() || $user->hasRight('module', 'delete', $slice->getModule()));
-				}
-
-				return false;
+				return $slice_id ? sly_Util_ArticleSlice::canMoveSlice($user, $slice_id) : false;
 			}
 
 			if ($action === 'addarticleslice') {
 				$module = $forceModule === null ? sly_request('module', 'string') : $forceModule;
-				return ($user->isAdmin() || $user->hasRight('module', 'add', sly_Authorisation_ModuleListProvider::ALL) || $user->hasRight('module', 'add', $module));
+				return sly_Util_ArticleSlice::canAddModule($user, $module);
 			}
 
 			if ($action === 'editarticleslice') {
@@ -88,7 +82,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 					$module = $forceModule;
 				}
 
-				return $user->hasRight('module', 'edit', sly_Authorisation_ModuleListProvider::ALL) || $user->hasRight('module', 'edit', $module);
+				return sly_Util_ArticleSlice::canEditModule($user, $module);
 			}
 
 			return true;
@@ -118,7 +112,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$direction = sly_get('direction', 'string');
 		$flash     = sly_Core::getFlashMessage();
 
-		// check of module exists
+		// check if module exists
 		$module = sly_Util_ArticleSlice::getModule($slice_id);
 
 		if (!$module) {
@@ -128,7 +122,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$user = sly_Util_User::getCurrentUser();
 
 			// check permission
-			if ($user->isAdmin() || $user->hasRight('module', 'move', $module) || $user->hasRight('module', 'move', sly_Authorisation_ModuleListProvider::ALL)) {
+			if (sly_Util_ArticleSlice::canMoveSlice($user, $slice_id)) {
 				$success = sly_Service_Factory::getArticleSliceService()->move($slice_id, $direction);
 
 				if ($success) {
@@ -226,7 +220,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$module = $slice->getModule();
 		$user   = sly_Util_User::getCurrentUser();
 
-		if (!$user->isAdmin() && !$user->hasRight('module', 'edit', sly_Authorisation_ModuleListProvider::ALL) && !$user->hasRight('module', 'edit', $module)) {
+		if (!sly_Util_ArticleSlice::canEditModule($module)) {
 			$flash->appendWarning(t('no_rights_to_this_module'));
 			return $this->redirectToArticle('#messages', $slice);
 		}
