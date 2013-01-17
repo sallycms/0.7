@@ -65,11 +65,21 @@ class sly_Slice_Renderer {
 	}
 
 	public function renderOutput(sly_Model_ISlice $slice) {
+		// Allow addOns to modify/switch the slice before rendering it.
+		// If no slice instance is returned, then it's assumed that the slice
+		// shall not be rendered and an empty string is returned.
+		$dispatcher = sly_Core::dispatcher();
+		$slice      = $dispatcher->filter('SLY_SLICE_PRE_RENDER', $slice, array('module' => $this->moduleName));
+
+		if (!($slice instanceof sly_Model_ISlice)) {
+			return '';
+		}
+
 		$service  = sly_Service_Factory::getModuleService();
 		$filename = $service->getFolder().DIRECTORY_SEPARATOR.$service->getOutputFilename($this->moduleName);
 		$values   = new sly_Slice_Values($this->values);
 
-		unset($service);
+		unset($service, $dispatcher);
 		ob_start();
 
 		try {
@@ -82,6 +92,13 @@ class sly_Slice_Renderer {
 			ob_end_clean();
 			throw $e;
 		}
+
+		// Allow addOns to alter the output before it's returned.
+		$dispatcher = sly_Core::dispatcher();
+		$output     = $dispatcher->filter('SLY_SLICE_POST_RENDER', $output, array(
+			'slice'  => func_get_arg(0),
+			'module' => $this->moduleName
+		));
 
 		return $output;
 	}
