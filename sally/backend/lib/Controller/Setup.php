@@ -256,7 +256,6 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			if ($success) {
 				$existingTables = array();
 				$db             = sly_DB_Persistence::getInstance();
-
 				foreach ($db->listTables() as $tblname) {
 					if (substr($tblname, 0, strlen($prefix)) === $prefix) {
 						$existingTables[] = $tblname;
