@@ -27,6 +27,7 @@
 class sly_I18N implements sly_I18N_Base {
 	protected $locale;
 	protected $texts;
+	protected $reportMissing = false;
 
 	/**
 	 * Constructor
@@ -107,6 +108,15 @@ class sly_I18N implements sly_I18N_Base {
 	}
 
 	/**
+	 * Enable reporting of missing translations to extension point SLY_I18N_MISSING_TRANSLATION
+	 * 
+	 * @param bool $enable
+	 */
+	public function setReportMissing($enable) {
+		$this->reportMissing = (boolean) $enable;
+	}
+
+	/**
 	 * Translate a key
 	 *
 	 * Looks in the message list for a matching key and returns the message. This
@@ -118,6 +128,10 @@ class sly_I18N implements sly_I18N_Base {
 	 */
 	public function msg($key) {
 		if (!$this->hasMsg($key)) {
+			if ($this->reportMissing) {
+				sly_Core::dispatcher()->notify('SLY_I18N_MISSING_TRANSLATION', $key, array('locale' => $this->getLocale()));
+			}
+
 			return '[translate:'.$key.']';
 		}
 
