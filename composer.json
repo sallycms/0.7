@@ -46,7 +46,8 @@
         "fabpot/yaml": "1.0.6",
         "leafo/lessphp": "0.3.*@stable",
         "webvariants/babelcache": "1.2.*",
-        "sallycms/less-mixins": ">=2.2.0,<3.0.0"
+        "sallycms/less-mixins": ">=2.2.0,<3.0.0",
+        "sallycms/composer-installer": "~1.1"
     },
     "require-dev": {
         "pear-phpunit/phpunit": ">=3.6.10,<3.8",
@@ -64,5 +65,13 @@
         "branch-alias": {
             "dev-default": "0.7.x-dev"
         }
+    },
+    "scripts": {
+        "post-package-install": [
+            "sly\\Composer\\Installer::onPostPkgInstall"
+        ],
+        "post-package-update": [
+            "sly\\Composer\\Installer::onPostPkgInstall"
+        ]
     }
 }

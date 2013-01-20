@@ -1,5 +1,5 @@
 {
-    "hash": "f3b672f3f9c4347eefb63dbbc1166fc7",
+    "hash": "8354222b7231636a0d02b0c3677f4fde",
     "packages": [
         {
             "name": "fabpot/yaml",
@@ -11,7 +11,6 @@
                 "shasum": null
             },
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "sfYaml": ""
@@ -34,12 +33,43 @@
             },
             "time": "2012-08-19 02:16:09",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "lessc.inc.php"
                 ]
             }
+        },
+        {
+            "name": "sallycms/composer-installer",
+            "version": "v1.1.2",
+            "source": {
+                "type": "hg",
+                "url": "https://bitbucket.org/SallyCMS/composer-installer/",
+                "reference": "v1.1.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/SallyCMS/composer-installer/get/v1.1.2.zip",
+                "reference": "v1.1.2",
+                "shasum": ""
+            },
+            "time": "2012-12-20 00:52:01",
+            "type": "composer-installer",
+            "extra": {
+                "class": "sly\\Composer\\Installer",
+                "branch-alias": {
+                    "dev-default": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "sly\\Composer": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ]
         },
         {
             "name": "sallycms/less-mixins",
@@ -60,7 +90,6 @@
             },
             "time": "2012-10-16 14:56:02",
             "type": "library",
-            "installation-source": "dist",
             "license": [
                 "MIT"
             ],
@@ -108,7 +137,6 @@
                     "dev-default": "1.x-dev"
                 }
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "BabelCache": "."
@@ -160,7 +188,6 @@
                 "pear-phpunit/dbunit": "== 1.1.2.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -187,7 +214,6 @@
                 "pear-phpunit/file_iterator": "== 1.3.3.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -224,7 +250,6 @@
                 "pear-phpunit/phpunit": "== 3.6.12.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -237,10 +262,10 @@
         },
         {
             "name": "pear-pear.phpunit.de/PHPUnit_MockObject",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "dist": {
                 "type": "file",
-                "url": "http://pear.phpunit.de/get/PHPUnit_MockObject-1.2.2.tgz",
+                "url": "http://pear.phpunit.de/get/PHPUnit_MockObject-1.2.3.tgz",
                 "reference": null,
                 "shasum": null
             },
@@ -249,10 +274,9 @@
                 "pear-pear.phpunit.de/text_template": ">=1.1.1.0"
             },
             "replace": {
-                "pear-phpunit/phpunit_mockobject": "== 1.2.2.0"
+                "pear-phpunit/phpunit_mockobject": "== 1.2.3.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -282,7 +306,6 @@
                 "pear-phpunit/php_codecoverage": "== 1.2.7.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -309,7 +332,6 @@
                 "pear-phpunit/php_timer": "== 1.0.4.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -337,7 +359,6 @@
                 "pear-phpunit/php_tokenstream": "== 1.1.5.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -364,7 +385,6 @@
                 "pear-phpunit/text_template": "== 1.1.4.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
@@ -391,7 +411,6 @@
                 "pear-symfony/yaml": "== 1.0.6.0"
             },
             "type": "pear-library",
-            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     ""
