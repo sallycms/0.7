@@ -105,10 +105,10 @@ class sly_Response {
 	 * @param array   $headers An array of response headers
 	 */
 	public function __construct($content = '', $status = 200, array $headers = array()) {
-		$this->headers = new sly_Util_Array($headers);
+		$this->headers = new sly_Util_Array();
 		$this->cacheControl = array();
-		if ($this->hasHeader('Cache-Control')) {
-			$this->setHeader('Cache-Control', $this->getHeader('Cache-Control'));
+		foreach ($headers as $name => $values) {
+			$this->setHeader($name, $values);
 		}
 		$this->setContent($content);
 		$this->setStatusCode($status);
