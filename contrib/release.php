@@ -101,11 +101,11 @@ foreach ($variants as $name => $settings) {
 
 	// run Composer to install all dependencies and addOns
 	elseif ($settings['install']) {
-		llog('requiring addons', 1);
+		llog('requiring addons...', 1);
 
 		foreach ($settings['addons'] as $addon) {
-			llog($addon.'...', 2, false);
-			exec('composer.phar require "'.$addon.'=*"');
+			llog($addon, 2, false);
+			exec('composer.phar require "'.$addon.'=*" --no-update');
 			finish();
 		}
 
