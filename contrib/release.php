@@ -32,8 +32,8 @@ $addons   = array(
 );
 
 $variants = array(
-	'starterkit'            => array('tests' => true, 'addons' => $addons, 'demo' => true, 'install' => false),
-	'starterkit-standalone' => array('tests' => true, 'addons' => $addons, 'demo' => true, 'install' => true),
+	'starterkit'            => array('tests' => true, 'addons' => $addons, 'demo' => '0.7', 'install' => false),
+	'starterkit-standalone' => array('tests' => true, 'addons' => $addons, 'demo' => '0.7', 'install' => true),
 
 	'lite'    => array('tests' => true,  'demo' => false, 'addons' => array()),
 	'minimal' => array('tests' => false, 'demo' => false, 'addons' => array())
@@ -142,7 +142,7 @@ foreach ($variants as $name => $settings) {
 		finish();
 
 		$exclude = '.hg_archival.txt;.hgignore;.hgtags;.travis.yml;make.bat';
-		archive($demoRepo, $target, 'tip', $exclude, 2);
+		archive($demoRepo, $target, $settings['demo'], $exclude, 2);
 	}
 
 	// Create archives
