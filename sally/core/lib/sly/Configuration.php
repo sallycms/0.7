@@ -137,21 +137,25 @@ class sly_Configuration {
 
 	public function loadLocalConfig() {
 		$filename = $this->getLocalConfigFile();
+		$localConfigModified = $this->localConfigModified;
 
 		if (file_exists($filename)) {
 			$config = sly_Util_YAML::load($filename, false, true);
 			$this->setInternal('/', $config, self::STORE_LOCAL);
 			$this->cache = null;
+			$this->localConfigModified = $localConfigModified;
 		}
 	}
 
 	public function loadProjectConfig() {
 		$filename = $this->getProjectConfigFile();
+		$projectConfigModified = $this->projectConfigModified;
 
 		if (file_exists($filename)) {
 			$config = sly_Util_YAML::load($filename, false, true);
 			$this->setInternal('/', $config, self::STORE_PROJECT);
 			$this->cache = null;
+			$this->projectConfigModified = $projectConfigModified;
 		}
 	}
 
