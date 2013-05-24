@@ -365,17 +365,20 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 
 	protected function isInUse(sly_Model_Medium $medium) {
 		$sql      = sly_DB_Persistence::getInstance();
-		$filename = addslashes($medium->getFilename());
+		$filename = $medium->getFilename();
 		$prefix   = sly_Core::getTablePrefix();
 		$query    =
 			'SELECT s.article_id, s.clang FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
 			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
-			'AND serialized_values LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
+			'AND serialized_values REGEXP ? GROUP BY s.article_id, s.clang';
 
 		$res    = array();
 		$usages = array();
+		$b      = '[^[:alnum:]_+-]'; // more or less like a \b in PCRE
+		$quoted = str_replace(array('.', '+'), array('\.', '\+'), $filename);
+		$data   = array("(^|$b)$quoted(\$|$b)");
 
-		$sql->query($query);
+		$sql->query($query, $data);
 		foreach ($sql as $row) $res[] = $row;
 
 		foreach ($res as $row) {
