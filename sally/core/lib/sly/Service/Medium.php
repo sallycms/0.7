@@ -208,6 +208,11 @@ class sly_Service_Medium extends sly_Service_Model_Base_Id {
 		$this->save($file);
 
 		$this->cache->flush('sly.medium.list');
+
+		// make sure previous failed attempts to fetch this object now refresh correctly
+		$this->cache->delete('sly.medium', md5($filename));
+		$this->cache->delete('sly.medium', $file->getId());
+
 		$this->dispatcher->notify('SLY_MEDIA_ADDED', $file, compact('user'));
 
 		return $file;
@@ -226,6 +231,8 @@ class sly_Service_Medium extends sly_Service_Model_Base_Id {
 
 		// notify the listeners and clear our own cache
 		$this->cache->delete('sly.medium', $medium->getId());
+		$this->cache->delete('sly.medium', md5($medium->getFilename()));
+
 		$this->dispatcher->notify('SLY_MEDIA_UPDATED', $medium, compact('user'));
 	}
 
@@ -265,6 +272,7 @@ class sly_Service_Medium extends sly_Service_Model_Base_Id {
 
 		$this->cache->flush('sly.medium.list');
 		$this->cache->delete('sly.medium', $medium->getId());
+		$this->cache->delete('sly.medium', md5($medium->getFilename()));
 
 		$this->dispatcher->notify('SLY_MEDIA_DELETED', $medium);
 
